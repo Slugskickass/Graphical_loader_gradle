@@ -10,9 +10,9 @@ import tornadofx.*
 import javafx.scene.paint.Color
 import tornadofx.Stylesheet.Companion.button
 
-class values(name: String, value: Int){
+class characters(name: String, bunny: Int){
     val nameProperty = SimpleStringProperty(this, "Name", name)
-    val valueProperty = SimpleIntegerProperty(this, "Value", value)
+    val valueProperty = SimpleIntegerProperty(this, "Value", bunny)
 }
 
 @ExperimentalStdlibApi
@@ -47,37 +47,65 @@ fun get_data(filename: String, params: Triple<Int, Int, Int>, legnth: Int): Shor
 class MyApp: App(MyView::class)
 
 class MyView: View(){
+        @ExperimentalStdlibApi
         override val root = borderpane {
+
+            val items = listOf(
+                characters("Width", 0),
+                characters("Height", 0),
+                characters("number frames",0),
+                characters("Block Length", 10)).asObservable()
+
+
+
             top = hbox{
                 label("file name"){
                     textFill = Color.AZURE
                 }
             }
             left = vbox {
-                button ("load")
-                button ("get para")
-                button ("get block data")
-                button (" get block")
-            }
-            center = tableview<values> {
-                items = listOf(
-                    values(" Width", 0),
-                    values("Height", 0),
-                    values("number frames",0),
-                values("Block Length", 10)).observable()
 
-                column("paramater", values::nameProperty)
-                column("Values", values::valueProperty)
+              val loadbutton = button{
+                  text ="Load File"
+                  setMinSize(110.0, 10.0)
+                  setMaxSize(110.0,100.0)
+                  textFill = Color.RED
+                  action {val pathname: String = "Data/KimLab_cell3-small.tsm"
+                      val params = get_file_params(pathname)
+                      items[0].valueProperty.set(params.first)
+                      items[1].valueProperty.set(params.second)
+                      items[2].valueProperty.set(params.third)
+                  }
+            }
+
+
+                button{
+                    text = "Get Block Data"
+                    setMinSize(110.0, 10.0)
+                    setMaxSize(110.0,100.0)
+                }
+                button{
+                    text = "Get Block"
+                    setMinSize(110.0, 10.0)
+                    setMaxSize(110.0,100.0)
+                }
+            }
+            center = tableview(items) {
+                column("Parameter", characters::nameProperty)
+                column("Values", characters::valueProperty)
             }
         }
     }
 
+class ParamModel(value: characters) : ItemViewModel<characters>(value){
+    val name = bind(characters::nameProperty)
+    val bunny = bind(characters::valueProperty)
+}
 
 @ExperimentalStdlibApi
 fun main() {
     launch<MyApp>()
-    val profile: IntArray = IntArray(4)
-    val pathname: String = "Data/KimLab_cell3-small.tsm"
-    val params = get_file_params(pathname)
-    println(params)
+//    val pathname: String = "Data/KimLab_cell3-small.tsm"
+//    val params = get_file_params(pathname)
+//    println(params)
 }
