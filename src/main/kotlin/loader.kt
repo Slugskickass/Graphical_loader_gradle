@@ -8,7 +8,8 @@ import java.nio.ByteOrder
 import java.nio.ShortBuffer
 import tornadofx.*
 import javafx.scene.paint.Color
-import tornadofx.Stylesheet.Companion.button
+import javafx.stage.FileChooser
+
 
 class characters(name: String, bunny: Int){
     val nameProperty = SimpleStringProperty(this, "Name", name)
@@ -34,10 +35,10 @@ fun readtext_Stream(position: Long, stream: FileInputStream, bytes: ByteArray): 
 }
 
 @ExperimentalStdlibApi
-fun get_data(filename: String, params: Triple<Int, Int, Int>, legnth: Int): ShortBuffer {
+fun get_data(filename: String, params: Triple<Int, Int, Int>, length: Int): ShortBuffer {
     val DATA_OFFSET: Long = 2880
     val file_data: RandomAccessFile = RandomAccessFile(filename, "r")
-    var bytes_new = ByteArray(params.first * params.second * 2 * legnth)
+    var bytes_new = ByteArray(params.first * params.second * 2 * length)
     file_data.seek(DATA_OFFSET)
     file_data.read(bytes_new)
     val view = ByteBuffer.wrap(bytes_new).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer()
@@ -54,7 +55,7 @@ class MyView: View(){
                 characters("Width", 0),
                 characters("Height", 0),
                 characters("number frames",0),
-                characters("Block Length", 10)).asObservable()
+                characters("Block Length", 0)).asObservable()
 
 
 
@@ -70,8 +71,11 @@ class MyView: View(){
                   setMinSize(110.0, 10.0)
                   setMaxSize(110.0,100.0)
                   textFill = Color.RED
-                  action {val pathname: String = "Data/KimLab_cell3-small.tsm"
-                      val params = get_file_params(pathname)
+                  action {//val pathname: String = "Data/KimLab_cell3-small.tsm"
+                      val ef = arrayOf(FileChooser.ExtensionFilter("NDR Files (.tsm)", "*.tsm"))
+                      val fn: List<File> = chooseFile("Select NDR file",ef)
+                      val pathname: String = fn[0].toString()
+                      val params = get_file_params(pathname.toString())
                       items[0].valueProperty.set(params.first)
                       items[1].valueProperty.set(params.second)
                       items[2].valueProperty.set(params.third)
@@ -83,6 +87,7 @@ class MyView: View(){
                     text = "Get Block Data"
                     setMinSize(110.0, 10.0)
                     setMaxSize(110.0,100.0)
+
                 }
                 button{
                     text = "Get Block"
