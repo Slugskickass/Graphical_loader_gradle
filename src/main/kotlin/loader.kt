@@ -45,6 +45,21 @@ fun get_data(filename: String, params: Triple<Int, Int, Int>, length: Int): Shor
     return(view)
 }
 
+private fun getlinepro(filename: String, params: Triple<Int, Int, Int>): DoubleArray {
+    val profile: DoubleArray = DoubleArray(params.third )
+    val stream = File(filename).inputStream()
+    var bytes = ByteArray(2)
+    stream.skip(2880)
+    for (x in 0 ..params.third-1){
+        stream.read(bytes)
+        var outer: ShortBuffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer()
+        profile[x] = outer.get(0).toDouble()
+        stream.skip((params.first * params.second * 2).toLong()-2)
+    }
+    return(profile)
+}
+
+
 class MyApp: App(MyView::class)
 
 class MyView: View(){
@@ -70,24 +85,31 @@ class MyView: View(){
                   text ="Load File"
                   setMinSize(110.0, 10.0)
                   setMaxSize(110.0,100.0)
-                  textFill = Color.RED
-                  action {//val pathname: String = "Data/KimLab_cell3-small.tsm"
+
+                  action {
                       val ef = arrayOf(FileChooser.ExtensionFilter("NDR Files (.tsm)", "*.tsm"))
-                      val fn: List<File> = chooseFile("Select NDR file",ef)
+                      val fn: List<File> = chooseFile("Select NDR file", ef)
                       val pathname: String = fn[0].toString()
                       val params = get_file_params(pathname)
                       items[0].valueProperty.set(params.first)
                       items[1].valueProperty.set(params.second)
                       items[2].valueProperty.set(params.third)
-                  }
-            }
+    //               if (params.third < 1000) {
+    //                   column("number frames", characters::valueProperty).cellFormat {
+   //               }
+    //              }
+
+                    }
+                }
 
 
                 button{
                     text = "Get Block Data"
                     setMinSize(110.0, 10.0)
                     setMaxSize(110.0,100.0)
-
+                    action{
+                        val profile: DoubleArray = getlinepro(pathname, params as Triple<Int, Int, Int>)
+                    }
                 }
                 button{
                     text = "Get Block"
