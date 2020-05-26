@@ -19,7 +19,7 @@ class characters(name: String, bunny: Int){
 @ExperimentalStdlibApi
 fun get_file_params(filename: String):Triple<Int, Int, Int> {
     val stream = File(filename).inputStream()
-    var bytes = ByteArray(8)
+    val bytes = ByteArray(8)
     val params =  Triple(readtext_Stream(266, stream, bytes), readtext_Stream(72, stream, bytes), readtext_Stream(72, stream, bytes))
     return params
 }
@@ -38,7 +38,7 @@ fun readtext_Stream(position: Long, stream: FileInputStream, bytes: ByteArray): 
 fun get_data(filename: String, params: Triple<Int, Int, Int>, length: Int): ShortBuffer {
     val DATA_OFFSET: Long = 2880
     val file_data: RandomAccessFile = RandomAccessFile(filename, "r")
-    var bytes_new = ByteArray(params.first * params.second * 2 * length)
+    val bytes_new = ByteArray(params.first * params.second * 2 * length)
     file_data.seek(DATA_OFFSET)
     file_data.read(bytes_new)
     val view = ByteBuffer.wrap(bytes_new).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer()
@@ -75,7 +75,7 @@ class MyView: View(){
                       val ef = arrayOf(FileChooser.ExtensionFilter("NDR Files (.tsm)", "*.tsm"))
                       val fn: List<File> = chooseFile("Select NDR file",ef)
                       val pathname: String = fn[0].toString()
-                      val params = get_file_params(pathname.toString())
+                      val params = get_file_params(pathname)
                       items[0].valueProperty.set(params.first)
                       items[1].valueProperty.set(params.second)
                       items[2].valueProperty.set(params.third)
