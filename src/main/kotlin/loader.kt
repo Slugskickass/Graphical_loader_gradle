@@ -90,10 +90,10 @@ class MyView: View(){
                       val ef = arrayOf(FileChooser.ExtensionFilter("NDR Files (.tsm)", "*.tsm"))
                       val fn: List<File> = chooseFile("Select NDR file", ef)
                       val pathname: String = fn[0].toString()
-                      val params = get_file_params(pathname)
-                      items[0].valueProperty.set(params.first)
-                      items[1].valueProperty.set(params.second)
-                      items[2].valueProperty.set(params.third)
+                      val file_params = get_file_params(pathname)
+                      items[0].valueProperty.set(file_params.first)
+                      items[1].valueProperty.set(file_params.second)
+                      items[2].valueProperty.set(file_params.third)
     //               if (params.third < 1000) {
     //                   column("number frames", characters::valueProperty).cellFormat {
    //               }
@@ -108,7 +108,7 @@ class MyView: View(){
                     setMinSize(110.0, 10.0)
                     setMaxSize(110.0,100.0)
                     action{
-                        val profile: DoubleArray = getlinepro(pathname, params as Triple<Int, Int, Int>)
+                   //     val profile: DoubleArray = getlinepro(pathname, file_params as Triple<Int, Int, Int>)
                     }
                 }
                 button{
