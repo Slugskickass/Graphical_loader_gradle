@@ -130,8 +130,9 @@ class MyView: View(){
             top = hbox {
                 val file_name_show = label("file name") {
                     textFill = Color.BLACK
-                    label().bind(result)
+                    textProperty().bind(result)
                 }
+
 
             }
             left = vbox {
@@ -149,7 +150,7 @@ class MyView: View(){
                       items[0].valueProperty.set(file_params.first)
                       items[1].valueProperty.set(file_params.second)
                       items[2].valueProperty.set(file_params.third)
-                      result.value = pathname
+                      result.set(pathname.subSequence(pathname.lastIndexOf('/') + 1, pathname.length) as String?)
                     }
                 }
 
